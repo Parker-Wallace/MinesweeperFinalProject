@@ -1,93 +1,38 @@
 
 const $ = (selector) => document.querySelector(selector);
+canvas = $("#gameboard")
+function gamestart (evt) {
 
-const generate_board = (evt) => {
+// initializing the game timer    
+setInterval(()=> {
+const timerbox = $('#gametimer');
+timerbox.textContent = ('000' + (parseInt(timerbox.textContent) + 1)).slice(-3)}, 1000)
 
-    let hasbombs = bombarray(evt.target.bombs, evt.target.size)
-    let sequence = 0
-
-    const minefield = document.createElement("div");
-    minefield.setAttribute("id", "minefield"); 
-    const old = $("#minefield");
-    old.replaceWith(minefield);
-    const root = $("#minefield");
-
-    let y = Math.round(evt.target.size/2)
-
-    for (let i = 0; i < evt.target.size; i++) {
-
-        let x = 0 - Math.round(evt.target.size/2)
-
-    for (let i = 0; i < evt.target.size; i++) {
-        const node = document.createElement("button");
-        node.setAttribute("xvalue", x);
-        node.setAttribute("yvalue", y);
-        node.hasbomb = hasbombs[sequence]
-
-        if (node.hasbomb == 1){
-            node.textContent = "💣"}
-        else {node.textContent = "⬜ "};
-        node.style.backgroundColor = "white";
-        root.appendChild(node);
-
-        x += 1
-        sequence += 1
+//create the board
+for (let i = 0; i < Math.sqrt(evt.target.dataset.size); i++) {
+    for (let j = 0; j < Math.sqrt(evt.target.dataset.size); j++) {
+      const node = document.createElement("button");
+      node.textContent = "0"; //used instead of "#" for visibility
+      node.dataset.coordinates = [i, j];
+      $("#minefield").appendChild(node);
     }
-    y -= 1
-    
-    root.appendChild(document.createElement("br"));
-    }
-}
+    $("#minefield").appendChild(document.createElement("br"));
+  }
 
-function bombarray (bombs, size) {
-    let bombShuffle = [];
-    for (let i = 0; i < (size*size); i ++)
-    {if (bombShuffle.length < bombs) {bombShuffle.push(1)}
-else {bombShuffle.push(0)}}
-bombShuffle.sort(function(){return 0.5 - Math.random()});
-return bombShuffle
-}
+};
 
-function Dangerlevel (client) {
 
-}
 
 document.addEventListener("DOMContentLoaded", () => {
-    const minefield = document.createElement("div");
-    minefield.setAttribute("id", "minefield");
-    document.body.appendChild(minefield);
-    const root = $("#minefield");
-    let y = 4
-    for (let i = 0; i < 9; i++) {
-        let x = -4
-      for (let i = 0; i < 9; i++) {
-        const node = document.createElement("button");
-        node.textContent = "⬜";
-        node.colourvalue = 0;
-        node.style.backgroundColor = "white";
-
-        root.appendChild(node);
-        x += 1
-      }
-      y -= 1
-      root.appendChild(document.createElement("br"));
-    }
-    const easy = document.createElement("button");
-    easy.textContent = "easy"
-    easy.size = 9
-    easy.bombs = 10
-    easy.addEventListener("click",generate_board)
-    const medium = document.createElement("button");
-    medium.textContent = "medium"
-    medium.size = 16
-    medium.bombs = 40
-    medium.addEventListener("click",generate_board)
-    const expert = document.createElement("button");
-    expert.size = 22
-    expert.bombs = 99
-    expert.addEventListener("click",generate_board)
-    expert.textContent = "expert"
-    document.body.appendChild(easy);
-    document.body.appendChild(medium);
-    document.body.appendChild(expert);
-  });
+    let isGameOver = false;
+    const difficulty = [{"difficulty":"easy", "size":81, "bombs":10},{"difficulty":"medium", "size":256, "bombs":10},{"difficulty":"hard", "size":480, "bombs":10}]
+    
+    difficulty.forEach((value)=> {
+    let button = document.createElement("button")
+    button.textContent = value.difficulty
+    button.dataset.size = value.size
+    button.dataset.bombs = value.bombs
+    button.addEventListener("click", gamestart)
+    canvas.appendChild(button)
+})
+})
