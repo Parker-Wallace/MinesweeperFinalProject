@@ -6,7 +6,6 @@ function gamestart (evt) {
 //variables
 const size = Math.sqrt(evt.target.dataset.size)
 const minecount = evt.target.dataset.bombs
-
 // initializing the game timer    
 setInterval(()=> {
 const timerbox = $('#gametimer');
@@ -18,18 +17,31 @@ let max = Math.round(size/2)
 let min = Math.round(size/2) - size
 for (let i = 0; i < minecount; i++) {
     do {
-        x = Math.floor(Math.random() * (max - (min + 1) ) + (min));
-        y = Math.floor(Math.random() * (max - (min + 1) ) + (min));
-    } while (mines.some(mine => mine.x === x && mine.y === y));
-    mines.push({ x, y })
+        col = Math.floor(Math.random() * (max - (min + 1) ) + (min));
+        row = Math.floor(Math.random() * (max - (min + 1) ) + (min));
+    } while (mines.some(mine => mine.col == col && mine.row == row));
+    mines.push({ col, row })
 };
 
 //create the board
 for (let i = Math.round(size/2) - size; i < Math.round(size/2); i++) {
     for (let j = Math.round(size/2) - size; j < Math.round(size/2); j++) {
       const node = document.createElement("button");
-      mines.some(mine => mine.x == i && mine.y == j)? node.textContent = "-1": node.textContent = "0"; // Set "M" for mine:
-
+      const isMine = mines.some(mine => mine.col === i && mine.row === j);
+      // Set "-1" for mine
+      node.textContent = isMine ? "-1" : "0";
+      if (!isMine) {
+          // Count adjacent mines for non-mine buttons
+          let adjacentMines = 0;
+          for (let dx = -1; dx <= 1; dx++) {
+              for (let dy = -1; dy <= 1; dy++) {
+                  if (mines.some(mine => mine.col == i + dx && mine.row == j + dy)) {
+                      adjacentMines++;
+                  }
+              }
+          }
+          node.textContent = adjacentMines;
+      }
       $("#minefield").appendChild(node);
     }
     $("#minefield").appendChild(document.createElement("br"));}
@@ -40,7 +52,7 @@ for (let i = Math.round(size/2) - size; i < Math.round(size/2); i++) {
 
 document.addEventListener("DOMContentLoaded", () => {
     let isGameOver = false;
-    const difficulty = [{"difficulty":"easy", "size":81, "bombs":10},{"difficulty":"medium", "size":256, "bombs":40},{"difficulty":"hard", "size":480, "bombs":99}]
+    const difficulty = [{"difficulty":"easy", "size":81, "bombs":10},{"difficulty":"medium", "size":256, "bombs":40},{"difficulty":"hard", "size":484, "bombs":99}]
     
     difficulty.forEach((value)=> {
     let button = document.createElement("button")
