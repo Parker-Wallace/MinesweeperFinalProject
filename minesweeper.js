@@ -22,7 +22,7 @@ for (let i = 0; i < minecount; i++) {
     do {
         col = Math.floor(Math.random() * (max - (min + 1) ) + (min));
         row = Math.floor(Math.random() * (max - (min + 1) ) + (min));
-    } while (mines.some(mine => mine.col == col && mine.row == row));
+    } while (mines.some((mine) => mine.col == col && mine.row == row));
     mines.push({ col, row })
 };
 
