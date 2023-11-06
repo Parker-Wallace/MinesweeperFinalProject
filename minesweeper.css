@@ -3,3 +3,7 @@ html {
     margin: auto;
     text-align: center;
 }
+
+button {
+    min-width: 4ch;
+}
