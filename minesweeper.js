@@ -2,7 +2,10 @@
 const $ = (selector) => document.querySelector(selector);
 canvas = $("#gameboard")
 function gamestart (evt) {
-
+$("#minefield").remove()
+const minefield = document.createElement("div")
+minefield.id = "minefield"
+canvas.appendChild(minefield)
 //variables
 const size = Math.sqrt(evt.target.dataset.size)
 const minecount = evt.target.dataset.bombs
@@ -33,8 +36,8 @@ for (let i = Math.round(size/2) - size; i < Math.round(size/2); i++) {
       if (!isMine) {
           // Count adjacent mines for non-mine buttons
           let adjacentMines = 0;
-          for (let dx = -1; dx <= 1; dx++) {
-              for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) { // counts one left to right of button in question
+              for (let dy = -1; dy <= 1; dy++) { // counts one above and below button in question
                   if (mines.some(mine => mine.col == i + dx && mine.row == j + dy)) {
                       adjacentMines++;
                   }
