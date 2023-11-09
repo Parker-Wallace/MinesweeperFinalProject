@@ -3,17 +3,22 @@
   <head>
     <title>MineSweeper</title>
     <link rel="stylesheet" href="minesweeper.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="minesweeper.js" defer></script>
   </head>
   <body>
     <main>
-      <h1>MineSweeper</h1>
-      <div id="gameboard">
-        <p>time:<span id="gametimer">0</span></p>
-        <p id="revealedmines">0</p>
+      <h1>minesweeper</h1>
+      <div id="gamebar">
+        <p>timer: <span id="timer"></span></p>
+        <p>mines<span id="revealedmines"></span></p>
+        <button id="easy">easy</button>
+        <button id="medium">medium</button>
+        <button id="hard">hard</button>
+        <button id="start">start</button>
       </div>
-        <div id="minefield">
-        </div>
+      <div id="minefield">
+      </div>
     </main>
   </body>
 </html>
