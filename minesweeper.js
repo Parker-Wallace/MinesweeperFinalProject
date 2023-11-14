@@ -10,7 +10,7 @@ class tile {
         this.isRevealed = true;
     }
     toggleFlag() {
-        this.isFlagged = true;
+        this.isFlagged = !this.isFlagged
     }
 }
 
@@ -48,11 +48,11 @@ class Minefield {
                 // Check the eight neighboring cells for mines
                 for (let x = -1; x <= 1; x++) {
                     for (let y = -1; y <= 1; y++) {
-                        const newRow = i + x;
-                        const newCol = j + y;
+                        const tempRow = i + x;
+                        const tempCol = j + y;
     
-                        if (newRow >= 0 && newRow < numRows && newCol >= 0 && newCol < numCols) {
-                            if (grid[newRow][newCol].isMine) {
+                        if (tempRow >= 0 && tempRow < numRows && tempCol >= 0 && tempCol < numCols) {
+                            if (grid[tempRow][tempCol].isMine) {
                                 mineCount++;
                             }
                         }
@@ -80,9 +80,100 @@ class Minefield {
                 minesPlaced++;
             }
         }
+    }    
+}
+
+class Timer {
+    constructor() {
+        this.seconds = 0;
+        this.intervalId = null;
     }
+
+    start() {
+        this.intervalId = setInterval(() => {
+            this.seconds++;
+            this.updateDisplay();
+        }, 1000);
+    }
+
+    stop() {
+        clearInterval(this.intervalId);
+    }
+
+    reset() {
+        this.seconds = 0;
+        this.updateDisplay();
+    }    
     
+    updateDisplay() {
+        $('#timer').text(('000' + this.seconds).slice(-3));
+    }
+}
+
+const timer = new Timer();
+
+function clicktile (row, col, minefield){
+    const tile = minefield.grid[row][col];
+    if (!tile.isRevealed && !tile.isFlagged && !tile.isMine)
+    {$("#clickcounter").text(parseInt($("#clickcounter").text()) + 1)}
+    revealCell(row, col, minefield)
+}
+
+function revealCell(row, col, minefield) {
+    const tile = minefield.grid[row][col];
+
+    if (!tile.isRevealed && !tile.isFlagged) {
+        tile.revealCell();
+
+        // Check if the revealed cell is a mine
+        if (tile.isMine) {
+            // Handle game over logic (e.g., display a message or end the game)
+            console.log("Game over! You hit a mine.");
+            $("#minefield").hide()
+            $("#resultscreen").show()
+        } else {
+            // Check if the revealed cell has zero neighboring mines
+            if (tile.neighborMines == 0) {
+                $(`#${row}-${col}`).text(tile.neighborMines)
+                revealNeighboringCells(row, col, minefield);
+                console.log(`Revealed cell at (${row}, ${col})`);
+            } else {
+                $(`#${row}-${col}`).text(tile.neighborMines)
+                console.log(`Revealed cell at (${row}, ${col}) with ${tile.neighborMines} neighboring mines`);
+            }
+        }
+    }
+}
+
+function revealNeighboringCells(row, col, minefield) {
+    const numRows = minefield.grid.length;
+    const numCols = minefield.grid[0].length;
+
+    // Loop through neighboring cells
+    for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+            const newRow = row + x;
+            const newCol = col + y;
+
+            // Check if the neighboring cell is within bounds
+            if (newRow >= 0 && newRow < numRows && newCol >= 0 && newCol < numCols) {
+                // Recursively reveal the neighboring cell
+                revealCell(newRow, newCol, minefield);
+            }
+        }
+    }
+}
+
+function flagCell(row, col, minefield) {
+    const tile = minefield.grid[row][col];
     
+    if (!tile.isRevealed) {
+        tile.toggleFlag();
+        $(`#${row}-${col}`).text(tile.isFlagged?"🚩":" ")
+        // Implement logic to update the UI based on flag status
+        // For simplicity, I'll just print the coordinates and the flag status.
+        console.log(`Cell at (${row}, ${col}) flagged: ${tile.isFlagged}`);
+    }
 }
 
 function difficultySelection(evt) {
@@ -92,9 +183,10 @@ function difficultySelection(evt) {
     initializeGame(rows, cols, mines);
 }
 
+
 $(document).ready(function () {
     //create the minefield
-
+    
     
     const difficulty = [
         { level: "easy", rows: 9, cols: 9, bombs: 10 },
@@ -114,12 +206,17 @@ $(document).ready(function () {
 });
 
 function initializeGame(rows, cols, mines) {
-    // Implement your game initialization logic here
-    console.log(`Selected difficulty: Rows ${rows}, Cols ${cols}`);
+    timer.stop();
+    timer.reset();
+    timer.start();
+    $("#minefield").show();
+    $("#resultscreen").hide();
+    
     let minefield = new Minefield(rows, cols)
     minefield.generateBoard();
     minefield.populateMines(minefield.grid, mines);
     minefield.calculateNeighbors(minefield.grid)
+    
     const minefieldDiv = $("#minefield");
     minefieldDiv.empty()
 
@@ -127,9 +224,17 @@ function initializeGame(rows, cols, mines) {
     for (let i = 0; i < minefield.grid.length; i++) {
         for (let j = 0; j < minefield.grid[i].length; j++) {
             const tile = document.createElement("button");
-            tile.textContent = (minefield.grid[i][j].isMine ? 1 : minefield.grid[i][j].neighborMines) ;
+            tile.textContent = ' '
+            tile.id = `${i}-${j}`
+            tile.addEventListener("click", () => clicktile(i, j, minefield));
+            tile.addEventListener("contextmenu", (event) => {
+                event.preventDefault(); // Prevent context menu on right-click
+                flagCell(i, j, minefield);
+            });
             minefieldDiv.append(tile);
         }
         minefieldDiv.append(document.createElement("br"));
     }
 }
+
+function endGame () {}

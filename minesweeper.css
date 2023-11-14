@@ -5,5 +5,11 @@ html {
 }
 
 button {
-    min-width: 4ch;
+    min-width: 4.2ch;
+    min-height: 3.75ch;
 }
+
+#resultscreen {
+    display: none;
+}
+
