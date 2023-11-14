@@ -224,7 +224,7 @@ function initializeGame(rows, cols, mines) {
     for (let i = 0; i < minefield.grid.length; i++) {
         for (let j = 0; j < minefield.grid[i].length; j++) {
             const tile = document.createElement("button");
-            tile.textContent = ' '
+            tile.innerHTML = "&nbsp;"
             tile.id = `${i}-${j}`
             tile.addEventListener("click", () => clicktile(i, j, minefield));
             tile.addEventListener("contextmenu", (event) => {
