@@ -5,9 +5,10 @@ html {
 }
 
 button {
-    min-width: 4.2ch;
-    min-height: 3.75ch;
+    min-width: 5ch;
+    min-height: 5ch;
     overflow: hidden;
+    font-size: small;
 }
 
 #resultscreen {

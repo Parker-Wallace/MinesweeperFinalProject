@@ -80,7 +80,20 @@ class Minefield {
                 minesPlaced++;
             }
         }
-    }    
+    }
+    
+    GameOver() {
+        GameOver = true;
+        this.grid.forEach((row, rowindex) => {
+            row.forEach((tile, colindex) => {
+                if (tile.isMine) {
+                    $(`#${rowindex}-${colindex}`).html("&#128163;")}
+                    $(`#${rowindex}-${colindex}`).off()
+            });
+            
+        });
+        $('.tile').off()
+    }
 }
 
 class Timer {
@@ -124,22 +137,18 @@ function revealCell(row, col, minefield) {
 
     if (!tile.isRevealed && !tile.isFlagged) {
         tile.revealCell();
-
-        // Check if the revealed cell is a mine
         if (tile.isMine) {
+            $(`#${row}-${col}`).css("background-color", "red");
+            minefield.GameOver()
             // Handle game over logic (e.g., display a message or end the game)
-            console.log("Game over! You hit a mine.");
-            $("#minefield").hide()
-            $("#resultscreen").show()
         } else {
             // Check if the revealed cell has zero neighboring mines
             if (tile.neighborMines == 0) {
-                $(`#${row}-${col}`).text(tile.neighborMines)
+               $(`#${row}-${col}`).css("background-color", "rgb(211,211,211)");
+                $(`#${row}-${col}`).html("&#8203;")
                 revealNeighboringCells(row, col, minefield);
-                console.log(`Revealed cell at (${row}, ${col})`);
             } else {
                 $(`#${row}-${col}`).text(tile.neighborMines)
-                console.log(`Revealed cell at (${row}, ${col}) with ${tile.neighborMines} neighboring mines`);
             }
         }
     }
@@ -169,7 +178,7 @@ function flagCell(row, col, minefield) {
     
     if (!tile.isRevealed) {
         tile.toggleFlag();
-        $(`#${row}-${col}`).text(tile.isFlagged?"🚩":" ")
+        $(`#${row}-${col}`).html(tile.isFlagged?"&#128681":"&nbsp;")
         // Implement logic to update the UI based on flag status
         // For simplicity, I'll just print the coordinates and the flag status.
         console.log(`Cell at (${row}, ${col}) flagged: ${tile.isFlagged}`);
@@ -183,11 +192,12 @@ function difficultySelection(evt) {
     initializeGame(rows, cols, mines);
 }
 
+let GameOver = false;
 
 $(document).ready(function () {
     //create the minefield
     
-    
+  
     const difficulty = [
         { level: "easy", rows: 9, cols: 9, bombs: 10 },
         { level: "medium", rows: 16, cols: 16, bombs: 40 },
@@ -225,8 +235,13 @@ function initializeGame(rows, cols, mines) {
         for (let j = 0; j < minefield.grid[i].length; j++) {
             const tile = document.createElement("button");
             tile.innerHTML = "&nbsp;"
+            tile.setAttribute("class", "tile");
             tile.id = `${i}-${j}`
-            tile.addEventListener("click", () => clicktile(i, j, minefield));
+            tile.addEventListener("click", () => {
+                if (!GameOver) {
+                    clicktile(i, j, minefield)
+                }
+            });
             tile.addEventListener("contextmenu", (event) => {
                 event.preventDefault(); // Prevent context menu on right-click
                 flagCell(i, j, minefield);
@@ -236,5 +251,3 @@ function initializeGame(rows, cols, mines) {
         minefieldDiv.append(document.createElement("br"));
     }
 }
-
-function endGame () {}
