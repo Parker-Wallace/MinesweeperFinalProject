@@ -10,12 +10,14 @@
     <main>
       <h1>minesweeper</h1>
       <div id="gamebar">
+        <div>
         <p>timer: <span id="timer">000</span></p>
-        <p>clicks: <span id="clickcounter">0</span></p>
+        <p>revealed: <span id="clickcounter">0</span></p>
+        </div>
+        <div id="selection"></div>
         <div id="resultscreen">
-          <p>YOU <span id="result"></span>!</p>
-          <p>your score<span id="score"></span></p>
-          <p>your time<span id="time"></span></p>
+          <p><span id="result"></span>!</p>
+          <button id="playagain">play again?</button>
         </div>
       </div>
       <br>

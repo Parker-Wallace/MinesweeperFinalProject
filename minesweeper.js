@@ -15,7 +15,8 @@ class tile {
 }
 
 class Minefield {
-    constructor(rows, cols) {
+    constructor(rows, cols, mines) {
+        this.wincon = (rows * cols) - mines
         this.cols = cols
         this.rows = rows
         this.grid = new Array()
@@ -82,17 +83,21 @@ class Minefield {
         }
     }
     
-    GameOver() {
+    GameOver(condition) {
         GameOver = true;
         this.grid.forEach((row, rowindex) => {
             row.forEach((tile, colindex) => {
                 if (tile.isMine) {
                     $(`#${rowindex}-${colindex}`).html("&#128163;")}
-                    $(`#${rowindex}-${colindex}`).off()
             });
             
         });
-        $('.tile').off()
+        timer.stop()
+        if (condition == "lose") {
+            $("#result").text("Game Over! you lose")}
+        else {$("#result").text("Game Over! you win")}
+        $("#resultscreen").show()
+
     }
 }
 
@@ -124,33 +129,30 @@ class Timer {
 }
 
 const timer = new Timer();
+let GameOver = false;
 
-function clicktile (row, col, minefield){
-    const tile = minefield.grid[row][col];
-    if (!tile.isRevealed && !tile.isFlagged && !tile.isMine)
-    {$("#clickcounter").text(parseInt($("#clickcounter").text()) + 1)}
-    revealCell(row, col, minefield)
-}
 
 function revealCell(row, col, minefield) {
     const tile = minefield.grid[row][col];
-
     if (!tile.isRevealed && !tile.isFlagged) {
         tile.revealCell();
+        $(`#${row}-${col}`).css("background-color", "rgb(211,211,211)");
         if (tile.isMine) {
             $(`#${row}-${col}`).css("background-color", "red");
-            minefield.GameOver()
-            // Handle game over logic (e.g., display a message or end the game)
+            minefield.GameOver("lose")
         } else {
-            // Check if the revealed cell has zero neighboring mines
             if (tile.neighborMines == 0) {
-               $(`#${row}-${col}`).css("background-color", "rgb(211,211,211)");
                 $(`#${row}-${col}`).html("&#8203;")
                 revealNeighboringCells(row, col, minefield);
             } else {
                 $(`#${row}-${col}`).text(tile.neighborMines)
             }
         }
+        minefield.wincon --
+        if (minefield.wincon == 0){
+        minefield.GameOver("win")
+        }
+        $("#clickcounter").text(parseInt($("#clickcounter").text()) + 1)
     }
 }
 
@@ -192,12 +194,7 @@ function difficultySelection(evt) {
     initializeGame(rows, cols, mines);
 }
 
-let GameOver = false;
-
 $(document).ready(function () {
-    //create the minefield
-    
-  
     const difficulty = [
         { level: "easy", rows: 9, cols: 9, bombs: 10 },
         { level: "medium", rows: 16, cols: 16, bombs: 40 },
@@ -211,24 +208,31 @@ $(document).ready(function () {
         button.dataset.cols = value.cols;
         button.dataset.bombs = value.bombs;
         button.addEventListener("click", difficultySelection); 
-        $("#gamebar").append(button);
+        $("#selection").append(button);
     });
+    $("#playagain").on("click", ()=>{
+        $("#resultscreen").hide();
+        $("#selection").show()
+        timer.reset();
+        $("#clickcounter").text(0)
+        $("#minefield").empty()
+    })
+
 });
 
 function initializeGame(rows, cols, mines) {
-    timer.stop();
+    GameOver = false;
     timer.reset();
     timer.start();
-    $("#minefield").show();
     $("#resultscreen").hide();
+    $("#selection").hide()
     
-    let minefield = new Minefield(rows, cols)
+    let minefield = new Minefield(rows, cols, mines)
     minefield.generateBoard();
     minefield.populateMines(minefield.grid, mines);
     minefield.calculateNeighbors(minefield.grid)
     
     const minefieldDiv = $("#minefield");
-    minefieldDiv.empty()
 
 
     for (let i = 0; i < minefield.grid.length; i++) {
@@ -239,12 +243,13 @@ function initializeGame(rows, cols, mines) {
             tile.id = `${i}-${j}`
             tile.addEventListener("click", () => {
                 if (!GameOver) {
-                    clicktile(i, j, minefield)
+                    revealCell(i, j, minefield, mines)
                 }
             });
             tile.addEventListener("contextmenu", (event) => {
-                event.preventDefault(); // Prevent context menu on right-click
-                flagCell(i, j, minefield);
+                event.preventDefault(); 
+                if (!GameOver) {
+                flagCell(i, j, minefield);}
             });
             minefieldDiv.append(tile);
         }
