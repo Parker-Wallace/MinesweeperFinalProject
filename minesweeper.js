@@ -128,6 +128,26 @@ class Timer {
     }
 }
 
+class Score {
+    constructor () {
+        this.score = parseInt($("#clickcounter").text());
+    }
+
+    resetScore () {
+        this.score = 0;
+        this.updateDisplay()
+    }
+
+    addScore () {
+        this.score += 1
+        this.updateDisplay()
+    }
+    updateDisplay() {
+        $("#clickcounter").text(('000' + this.score).slice(-3));
+    }
+}
+
+const score = new Score()
 const timer = new Timer();
 let GameOver = false;
 
@@ -136,7 +156,7 @@ function revealCell(row, col, minefield) {
     const tile = minefield.grid[row][col];
     if (!tile.isRevealed && !tile.isFlagged) {
         tile.revealCell();
-        $(`#${row}-${col}`).css("background-color", "rgb(211,211,211)");
+        $(`#${row}-${col}`).css("border", "1px solid #707070");
         if (tile.isMine) {
             $(`#${row}-${col}`).css("background-color", "red");
             minefield.GameOver("lose")
@@ -147,12 +167,13 @@ function revealCell(row, col, minefield) {
             } else {
                 $(`#${row}-${col}`).text(tile.neighborMines)
             }
-        }
         minefield.wincon --
         if (minefield.wincon == 0){
         minefield.GameOver("win")
         }
-        $("#clickcounter").text(parseInt($("#clickcounter").text()) + 1)
+        score.addScore();
+        }
+
     }
 }
 
@@ -195,6 +216,7 @@ function difficultySelection(evt) {
 }
 
 $(document).ready(function () {
+    
     const difficulty = [
         { level: "easy", rows: 9, cols: 9, bombs: 10 },
         { level: "medium", rows: 16, cols: 16, bombs: 40 },
@@ -214,19 +236,20 @@ $(document).ready(function () {
         $("#resultscreen").hide();
         $("#selection").show()
         timer.reset();
-        $("#clickcounter").text(0)
+        score.resetScore();
         $("#minefield").empty()
+        $("#minefield").hide()
+
     })
 
 });
 
 function initializeGame(rows, cols, mines) {
     GameOver = false;
-    timer.reset();
     timer.start();
     $("#resultscreen").hide();
     $("#selection").hide()
-    
+    $("#minefield").show()
     let minefield = new Minefield(rows, cols, mines)
     minefield.generateBoard();
     minefield.populateMines(minefield.grid, mines);

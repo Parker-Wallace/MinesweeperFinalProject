@@ -4,14 +4,61 @@ html {
     text-align: center;
 }
 
-button {
-    min-width: 5ch;
-    min-height: 5ch;
-    overflow: hidden;
-    font-size: small;
-}
-
 #resultscreen {
     display: none;
 }
 
+#score-container {
+    margin: 1em;
+    padding: .5em 2em;
+    border-style:outset;
+    background-color: #808080;
+}
+#score-container > p {
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin:3em;
+    padding: 0 0.5em;
+    display: inline;
+    border-style: inset;
+    text-decoration-color: red;
+}
+
+main {
+    border-style:outset;
+    background-color: #808080;
+
+}
+
+main > h1 {
+    text-transform: capitalize;
+    border-style: outset;
+margin: 1em auto 1em auto;
+width: 50%;
+}
+
+#selection > button {
+    border: unset;
+    text-transform: capitalize;
+    border-style: outset;
+    background-color: #808080;
+    padding: .25em;
+    margin:1em auto 1em auto;
+    
+}
+
+#minefield {
+    border-style: outset;
+    width: fit-content;
+    margin: 1em;
+    padding: 1em;
+    display: none;
+}
+
+#minefield > button {
+    border: unset;
+    border-style: outset;
+    background-color: #808080;
+    min-height: 5ch;
+    min-width: 5ch;
+    overflow: hidden;
+}
