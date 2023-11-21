@@ -6,12 +6,43 @@ html {
 
 #resultscreen {
     display: none;
+    border-style: inset;
+    background-color: #808080;
+    margin: 1em;
+    padding: .5em
+}
+
+#resultscreen > p {
+    border-style: outset;
+    max-width: fit-content;
+    margin: 1em auto 1em auto;
+    width: 50%;
+    padding: .5em;
+    background-color: #808080;
+    text-transform: capitalize;
+
+}
+
+#playagain {
+    border: unset;
+    text-transform: capitalize;
+    border-style: outset;
+    background-color: #808080;
+    padding: .25em;
+    margin:1em auto 1em auto;
+}
+
+#selection {
+    margin: 1em;
+    padding: .5em 2em;
+    border-style:inset;
+    background-color: #808080;
 }
 
 #score-container {
     margin: 1em;
     padding: .5em 2em;
-    border-style:outset;
+    border-style:inset;
     background-color: #808080;
 }
 #score-container > p {
@@ -19,21 +50,22 @@ html {
     margin:3em;
     padding: 0 0.5em;
     display: inline;
-    border-style: inset;
+    border-style: outset;
     text-decoration-color: red;
 }
 
 main {
     border-style:outset;
-    background-color: #808080;
+    background-color: #adabab;
 
 }
 
 main > h1 {
     text-transform: capitalize;
-    border-style: outset;
+    border-style: inset;
 margin: 1em auto 1em auto;
 width: 50%;
+background-color: #808080;
 }
 
 #selection > button {
@@ -47,11 +79,12 @@ width: 50%;
 }
 
 #minefield {
-    border-style: outset;
+    border-style: inset;
     width: fit-content;
     margin: 1em;
     padding: 1em;
     display: none;
+    background-color: #808080;
 }
 
 #minefield > button {
