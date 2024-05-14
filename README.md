@@ -14,7 +14,7 @@ This web-based Minesweeper game, developed as a JavaScript school project, provi
 ## How to Play
 
 1. **Opening the Game:**
-   - Clone the repository: `git clone https://github.com/your-username/minesweeper.git`
+   - Clone the repository: `git clone https://github.com/Parker-Wallace/MinesweeperFinalProject`
    - Open the `index.html` file in your preferred web browser.
 
 2. **Game Rules:**
